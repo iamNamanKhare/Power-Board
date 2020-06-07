@@ -1,48 +1,41 @@
 const express = require('express')
 const path = require('path')
 const app = express()
-const passport = require('./passport-setup')
+const authRoutes = require('./routes/auth-routes')
+const passport = require('./config/passport-setup')
 const cookieSession = require('cookie-session')
+const cors = require('cors')
+require('./config/keys')
 
 const port = process.env.PORT || 4000
+
+const isLoggedIn = (req, res, next) => {    // can be added in another file
+    if(req.user){
+        next()
+    }
+    else{
+        res.redirect('/')
+    }
+}
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 app.use(cookieSession({
-    name: 'session',
-    keys: ['key1', 'key2']
+    keys: ['somesecretkey']
 }))
-
-// following code to be added in another file
-const isLoggedIn = (req, res, next) => {
-    if(req.user){
-        next()
-    }
-    else{
-        res.sendStatus(401)
-    }
-}
 
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/', express.static(path.join(__dirname, 'Public')))
-app.get('/failed', (req, res) => {
-    res.send('You Failed to login.')
+app.use(cors())
+
+app.use('/', express.static(path.join(__dirname, 'Public')))
+app.use('/auth', authRoutes)
+
+app.get('/home', isLoggedIn, (req, res) => {
+    res.send("You Reached The Home Page")
 })
-
-app.get('/success', isLoggedIn, (req, res) => {
-    res.send(`Welcome to powerApp Mr. dot`)
-})
-
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
-    function(req, res) {
-        // Successful authentication, redirect home.
-        res.redirect('/success');
-});
 
 app.get('/logout', (req, res) => {
     req.session = null;
