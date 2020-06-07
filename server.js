@@ -3,6 +3,8 @@ const path = require('path')
 const app = express()
 const authRoutes = require('./routes/auth-routes')
 const passport = require('./config/passport-setup')
+const mongoose = require('mongoose')
+const keys = require('./config/keys')
 const cookieSession = require('cookie-session')
 const cors = require('cors')
 require('./config/keys')
@@ -22,13 +24,19 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 app.use(cookieSession({
-    keys: ['somesecretkey']
+    maxAge: 24*60*60*1000,
+    keys: [keys.session.cookieKey]
 }))
 
 app.use(passport.initialize())
 app.use(passport.session())
 
 app.use(cors())
+
+mongoose.connect(keys.mongodb.dbURI,{ useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    console.log('Connected to Database')
+})
+
 
 app.use('/', express.static(path.join(__dirname, 'Public')))
 app.use('/auth', authRoutes)
