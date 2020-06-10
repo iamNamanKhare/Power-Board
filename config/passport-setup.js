@@ -45,7 +45,7 @@ passport.use(new GoogleStrategy({
                 }
             }).catch((err) => {
                 done(err, false)
-            })
+            })  
     }
 ))
 

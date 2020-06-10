@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const authRoutes = require('./routes/auth-routes')
+const todoRoute = require('./routes/api/todo-route')
 const passport = require('./config/passport-setup')
 const mongoose = require('mongoose')
 const keys = require('./config/keys')
@@ -37,12 +38,19 @@ mongoose.connect(keys.mongodb.dbURI,{ useNewUrlParser: true, useUnifiedTopology:
     console.log('Connected to Database')
 })
 
-
 app.use('/', express.static(path.join(__dirname, 'Public')))
 app.use('/auth', authRoutes)
 
+app.use('/api/todos', isLoggedIn, todoRoute)
+
 app.get('/home', isLoggedIn, (req, res) => {
-    res.send("You Reached The Home Page")
+    // console.log(req.user)
+    res.sendFile(path.join(__dirname,'Public/home.html'))
+})
+
+app.get('/tasks', isLoggedIn, (req, res) => {
+    // console.log(req)
+    res.sendFile(path.join(__dirname, 'Public/task.html'))
 })
 
 app.get('/logout', (req, res) => {
