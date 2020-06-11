@@ -3,6 +3,8 @@ const path = require('path')
 const app = express()
 const authRoutes = require('./routes/auth-routes')
 const todoRoute = require('./routes/api/todo-route')
+const notesRoute = require('./routes/api/notes-routes')
+const newsRoute = require('./routes/api/news-route')
 const passport = require('./config/passport-setup')
 const mongoose = require('mongoose')
 const keys = require('./config/keys')
@@ -42,15 +44,12 @@ app.use('/', express.static(path.join(__dirname, 'Public')))
 app.use('/auth', authRoutes)
 
 app.use('/api/todos', isLoggedIn, todoRoute)
+app.use('/api/notes', isLoggedIn, notesRoute)
+app.use('/api/news', isLoggedIn, newsRoute)
 
 app.get('/home', isLoggedIn, (req, res) => {
     // console.log(req.user)
     res.sendFile(path.join(__dirname,'Public/home.html'))
-})
-
-app.get('/tasks', isLoggedIn, (req, res) => {
-    // console.log(req)
-    res.sendFile(path.join(__dirname, 'Public/task.html'))
 })
 
 app.get('/logout', (req, res) => {
