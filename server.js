@@ -12,7 +12,7 @@ const cookieSession = require('cookie-session')
 const cors = require('cors')
 require('./config/keys')
 
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 4000 
 
 const isLoggedIn = (req, res, next) => {    // can be added in another file
     if(req.user){
