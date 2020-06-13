@@ -20,7 +20,7 @@
 
         <div class="collapse navbar-collapse" id="navbarCollapse9">
             <div class="navbar-nav ml-auto">
-                <a href="" class="nav-item nav-link">Logout</a>
+                <a href="/logout" class="nav-item nav-link">Logout</a>
             </div>
         </div>
     </nav>
@@ -70,17 +70,23 @@
             </div>
             <div class="col-8">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-12" style="height: 50%; background-color: rgb(255, 234, 189); padding: 10px;">
-                            <h3 style="padding: 5px;">Notes</h3>
-                            <div class="d-flex flex-row flex-nowrap overflow-auto">
+                    <div class="row" style="display: block;">
+                        <div class="col-12" style="min-height: 55vh; background-color: rgb(255, 234, 189); padding: 10px;">
+                            
+                            <h3 style="padding-left: 10px; padding-top: 5px;">Notes</h3>
+                            <div class="d-flex flex-row flex-nowrap overflow-auto" id="notelist">
                                 <!-- Add multiple Cards Here -->
-                                <div class="card card-block mx-2" style="width: 18rem; min-width: 250px;">
+                                <div class="card card-block mx-2" style="width: 18rem; min-width: 200px; ">
                                     <div class="card-body">
-                                      <h5 class="card-title">Card title</h5>
-                                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                      <a href="" class="card-link">Edit Note</a>
-                                      <a href="" class="card-link">View Note</a>
+                                        
+                                        <input class="card-title form-control form-control-sm" type="text" placeholder="Title" id="noteTitle">
+                                    
+                                        <p class="card-text">
+                                            <div class="form-group">
+                                                <textarea class="form-control" placeholder="Description of Note" id="noteDesc" rows="3" style="min-height: 150px;"></textarea>
+                                            </div>
+                                        </p>
+                                        <button id="addNoteBtn" class="btn btn-primary btn-sm">Save Note</button>
                                     </div>
                                 </div>
                             </div>

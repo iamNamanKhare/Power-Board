@@ -9,11 +9,12 @@ router.get('/', (req, res) => {
 
     User.findById(userId)
         .then((user) => {
-            notesUser.find({userID: user._id})
-                .then((notesList) => {
+
+            UserNotes.findOne({userID: user._id})
+                .then((notes) => {
                     // if user list is already created
-                    if(notesList){
-                        res.status(200).json({notesList})   //to be changed later on
+                    if(notes){
+                        res.status(200).json({notes})   //to be changed later on
                     }
                     else{
                         res.status(200).json({})
@@ -30,7 +31,7 @@ router.get('/', (req, res) => {
         })
 })
 
-// POST REQUEST TO ADD A TASK
+// POST REQUEST TO ADD A NOTE
 router.post('/', (req, res) => {
     console.log('[ POST REQUEST ] /api/notes')
     let newNote = {title: req.body.noteTitle, desc: req.body.noteDesc}
@@ -83,14 +84,14 @@ router.post('/', (req, res) => {
 router.post('/edit', (req, res) => {
     let userId = req.user.id
 
+    console.log("[ POST REQUEST ] Edit Notes")
+
     User.findById(userId)
         .then((user) => {
 
-            console.log("[ POST REQUEST ] Notes Title : " + req.body.noteTitle + " Desc : " + req.body.noteDesc + " , with Id : " + req.body.objectID)
-
             UserNotes.updateOne(
-                { userID: user._id, 'notesList._id' : req.body.objectID},
-                { $set: { 'notesList.$.title': req.body.noteTitle, 'notesList.$.desc': req.body.noteDesc } },
+                { userID: user._id, 'notesList.title' : req.body.noteTitle},
+                { $set: {'notesList.$.desc': req.body.noteDesc } },
                 (err, editedNote) => {
                     if(err){
                         console.log("Error while Editing a Note")
@@ -113,10 +114,10 @@ router.post('/edit', (req, res) => {
 router.delete('/', (req, res) => {
     let userId = req.user.id
 
+    console.log("[ DELETE REQUEST ] Notes ")
+    
     User.findById(userId)
         .then((user) => {
-
-            console.log("[ DELETE REQUEST ] Notes Title : " + req.body.noteTitle)
 
             UserNotes.updateOne(
                 { userID: user._id},
