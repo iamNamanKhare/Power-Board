@@ -6,7 +6,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get('/google/redirect', passport.authenticate('google'),
     function(req, res) {
         // Successful authentication, redirect home.
-        res.redirect('/home');
+        res.redirect('/');
 });
 
 module.exports = router
