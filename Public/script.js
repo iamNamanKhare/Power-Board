@@ -14,8 +14,8 @@ $(function(){
         console.log('delete button clicked')
 
         $.ajax({
-            url: '/api/todos',
-            type: 'DELETE',
+            url: '/api/todos/getid',
+            type: 'GET',
             data: {
                 title: tasktitle.val()
             },

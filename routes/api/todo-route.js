@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 
     User.findById(userId)
         .then((user) => {
-            UserToDoList.find({userID: user._id})
+            UserToDoList.findOne({userID: user._id})
                 .then((taskList) => {
                     // if user list is already created
                     if(taskList){
@@ -33,11 +33,11 @@ router.get('/', (req, res) => {
 // POST REQUEST TO ADD A TASK
 router.post('/', (req, res) => {
     console.log('[ POST REQUEST ] /api/todos')
-    var todoTask = {title: req.body.taskTitle}
+    var todoTask = {title: req.body.title}
     let userId = req.user.id;
     User.findById(userId)
         .then((user) => {
-            console.log("User fetched POST" + user)
+            //console.log("User fetched POST" + user)
             UserToDoList.findOne({userID: user._id})
                 .then((todoUser) => {
 
@@ -86,10 +86,10 @@ router.post('/toggledone', (req, res) => {
     User.findById(userId)
         .then((user) => {
 
-            console.log("[ POST REQUEST ] DONE : " + req.body.isDone + " , with Id : " + req.body.objectID)
+            console.log("[ POST REQUEST ] DONE : " + req.body.isDone + " , with Title : " + req.body.title)
 
             UserToDoList.updateOne(
-                { userID: user._id, 'tasks._id' : req.body.objectID},
+                { userID: user._id, 'tasks.title' : req.body.title},
                 { $set: { 'tasks.$.done': req.body.isDone } },
                 (err, toggledTask) => {
                     if(err){
@@ -97,7 +97,7 @@ router.post('/toggledone', (req, res) => {
                         res.statusCode(503).json({err})
                     }
 
-                    console.log("To Do list Updated Successfully")
+                    console.log("Todo Item Updated Successfully")
                     res.json({toggledTask})
                 }
             )
@@ -108,35 +108,35 @@ router.post('/toggledone', (req, res) => {
         })
 })
 
-// POST REQUEST TO EDIT A COMPLETION STATUS OF TASK
+// // POST REQUEST TO EDIT A TITILE OF TASK
 
-router.post('/toggletitle', (req, res) => {
-    let userId = req.user.id
+// router.post('/toggletitle', (req, res) => {
+//     let userId = req.user.id
 
-    User.findById(userId)
-        .then((user) => {
+//     User.findById(userId)
+//         .then((user) => {
 
-            console.log("[ POST REQUEST ] TITLE : " + req.body.title + " , with Id : " + req.body.objectID)
+//             console.log("[ POST REQUEST ] TITLE : " + req.body.title + " , with Id : " + req.body.objectID)
 
-            UserToDoList.updateOne(
-                { userID: user._id, 'tasks._id' : req.body.objectID},
-                { $set: { 'tasks.$.title': req.body.title } },
-                (err, toggledTask) => {
-                    if(err){
-                        console.log("Error while Deleting")
-                        res.statusCode(503).json({err})
-                    }
+//             UserToDoList.updateOne(
+//                 { userID: user._id, 'tasks._id' : req.body.objectID},
+//                 { $set: { 'tasks.$.title': req.body.title } },
+//                 (err, toggledTask) => {
+//                     if(err){
+//                         console.log("Error while Deleting")
+//                         res.statusCode(503).json({err})
+//                     }
 
-                    console.log("To Do list Updated Successfully")
-                    res.json({toggledTask})
-                }
-            )
-        })
-        .catch((err) => {
-            console.log("Error, Finding, User, User Collection")
-            res.status(503).json({message: err})
-        })
-})
+//                     console.log("To Do list Updated Successfully")
+//                     res.json({toggledTask})
+//                 }
+//             )
+//         })
+//         .catch((err) => {
+//             console.log("Error, Finding, User, User Collection")
+//             res.status(503).json({message: err})
+//         })
+// })
 
 // DELETE REQUEST TO DELETE A TASK
 

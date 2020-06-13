@@ -2,22 +2,49 @@ $(function(){
 
     // function to remove Todo List Item
     function rmvToDoItem(){
-        $(this).parent().parent().remove()
-        console.log("Rmv Called")
+        $.ajax({
+            url: '/api/todos',
+            method: 'DELETE',
+            data: {
+                title: $(this).parent().parent().children(':first-child').html()
+            },
+            success: (data) => {
+                $(this).parent().parent().remove()
+            }
+        })
     }
 
-    // function to change Status of Item
-    function doneStatusItem(){
-        console.log("Item done")
+    // Req Function to change Status of Item
+    function toggleStatusItem(){
+
+        // POST request for Item: not <-> done
+        $.ajax({
+            url: '/api/todos/toggledone',
+            method: 'POST',
+            data: {
+                title: $(this).parent().parent().children(':first-child').html(),
+                isDone: $(this).hasClass("done")?false:true
+            },
+            success: (result) => {
+                // On Successfully toggling class, mechanism to switch List of given item
+                if($(this).hasClass("done")){ // done -> not done
+                    $(this).parent().parent().detach().appendTo('#todolist')
+                    $(this).html("Done")
+                }
+                else{//not done -> done
+                    $(this).parent().parent().detach().appendTo('#completedlist')
+                    $(this).html("Unfinished ?")
+                }
+
+                $(this).toggleClass("done")
+            }
+        })
     }
 
-    // Function To Delete Item or Change Status of an Todo List item
-    $('#addtodoitemBtn').click(() => {
-            let todoText = $('#itemValue').val();
-            $('#itemValue').val("");
+    //Function To Populate Todo List Item
+    function populateTodoItem(todoText, isDone){
 
-            //creating Todo List Item
-            let trItem = document.createElement("TR")
+        let trItem = document.createElement("TR")
             trItem.classList.add("todolistitem")
             let tdItemText = document.createElement("TD")
 
@@ -28,7 +55,13 @@ $(function(){
             let dnBtn = document.createElement("BUTTON")
             dnBtn.classList.add("btn", "btn-info", "btn-sm")
             dnBtn.innerText = "Done"
-            dnBtn.addEventListener('click', doneStatusItem)
+            dnBtn.addEventListener('click', toggleStatusItem)
+
+            if(isDone){
+                dnBtn.classList.add("done")
+                dnBtn.innerText = "Unfinished ?"
+            }
+
             
             tdItemBtn.appendChild(dnBtn)
 
@@ -42,15 +75,41 @@ $(function(){
             trItem.appendChild(tdItemText)
             trItem.appendChild(tdItemBtn)
 
-            document.getElementById('todolist').appendChild(trItem)
+            if(isDone){
+                document.getElementById('completedlist').appendChild(trItem)
+            } else {
+                document.getElementById('todolist').appendChild(trItem)
+            }
+    }
+
+    //Function to Add Item in todo List
+    $('#addtodoitemBtn').click(() => {
+            let todoText = $('#itemValue').val();
+            $('#itemValue').val("");
+
+            //document.getElementById('todolist').appendChild(trItem)
+            $.ajax({
+                url: 'api/todos',
+                method: 'POST',
+                data: {
+                    title: todoText
+                },
+                success: (data) => {
+                    populateTodoItem(todoText, false)
+                }
+            })
     });
 
-})
+    $.ajax({
+        url: '/api/todos',
+        method: 'GET',
+        success: (data) => {
+            if(!jQuery.isEmptyObject(data)){
+                data.taskList.tasks.map((todoItem) => {
+                    populateTodoItem(todoItem.title, todoItem.done)
+                })
+            }
+        }
+    })
 
-{/* <tr class="todolistitem">
-    <td>Mark</td>
-    <td class="text-right">
-        <button class="btn btn-info btn-sm">Done</button>
-        <button class="btn btn-danger btn-sm">Delete</button>
-    </td>
-</tr> */}
+})
