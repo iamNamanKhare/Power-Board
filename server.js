@@ -8,9 +8,9 @@ const notesRoute = require('./routes/api/notes-routes')
 const newsRoute = require('./routes/api/news-route')
 const passport = require('./config/passport-setup')
 const mongoose = require('mongoose')
-const keys = require('./config/keys')
 const cookieSession = require('cookie-session')
 const cors = require('cors')
+require('dotenv').config()
 
 const port = process.env.PORT || 4000 
 
@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: true}))
 
 app.use(cookieSession({
     maxAge: 24*60*60*1000,
-    keys: [process.env.cookieKey||keys.session.cookieKey]
+    keys: [process.env.cookieKey]
 }))
 
 app.use(passport.initialize())
@@ -27,7 +27,7 @@ app.use(passport.session())
 
 app.use(cors())
 
-mongoose.connect(process.env.dbURI||keys.mongodb.dbURI,{ useNewUrlParser: true, useUnifiedTopology: true }, () => {
+mongoose.connect(process.env.dbURI,{ useNewUrlParser: true, useUnifiedTopology: true }, () => {
     console.log('Connected to Database')
 })
 
