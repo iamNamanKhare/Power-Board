@@ -18,7 +18,7 @@ passport.deserializeUser((id, done) => {
 passport.use(new GoogleStrategy({
         clientID: process.env.ClientId,
         clientSecret: process.env.ClientSecret,
-        callbackURL: "https://power-board.herokuapp/auth/google/redirect"
+        callbackURL: "https://power-board.herokuapp.com/auth/google/redirect"
     },(accessToken, refreshToken, profile, done) => {
         User.findOne({googleId: profile.id}) 
             .then((currentUser) => {
