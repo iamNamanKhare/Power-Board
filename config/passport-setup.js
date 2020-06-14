@@ -18,13 +18,12 @@ passport.deserializeUser((id, done) => {
 passport.use(new GoogleStrategy({
         clientID: process.env.ClientId,
         clientSecret: process.env.ClientSecret,
-        callbackURL: "https://power-board.herokuapp.com/auth/google/redirect"
+        callbackURL: "https://power-board.herokuapp/auth/google/redirect"
     },(accessToken, refreshToken, profile, done) => {
         User.findOne({googleId: profile.id}) 
             .then((currentUser) => {
                 if(currentUser){
                     //already a user
-                    
                     done(null, currentUser)
                 } else {
                 //if not, create a user in our db
@@ -35,7 +34,6 @@ passport.use(new GoogleStrategy({
                     })
                     .save()
                     .then((newUser) => {
-                        console.log('New User Created : ' + newUser)
                         done(null, newUser)
                     })
                     .catch((err) => {
