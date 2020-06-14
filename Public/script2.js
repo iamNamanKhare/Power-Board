@@ -53,7 +53,7 @@ $(function(){
         tdItemBtn.classList.add("text-right")
 
         let dnBtn = document.createElement("BUTTON")
-        dnBtn.classList.add("btn", "btn-info", "btn-sm")
+        dnBtn.classList.add("btn", "btn-info", "btn-sm", "inlineBtn")
         dnBtn.innerText = "Done"
         dnBtn.addEventListener('click', toggleStatusItem)
 
@@ -66,7 +66,7 @@ $(function(){
         tdItemBtn.appendChild(dnBtn)
 
         let delBtn = document.createElement("BUTTON")
-        delBtn.classList.add("btn", "btn-danger", "btn-sm")
+        delBtn.classList.add("btn", "btn-danger", "btn-sm", "inlineBtn")
         delBtn.innerText = "Delete"
         delBtn.addEventListener('click', rmvToDoItem)
 
@@ -212,6 +212,67 @@ $(function(){
     // --------------------END NOTES---------------------------
 
     //-------------------FOR NEWS API --------------------------
+    // <div class="card card-block mx-2" style="width: 18rem; min-width: 250px;">
+    //     <img class="card-img-top" src="./tom-crew-7HuTGlUfQSo-unsplash.jpg" alt="Card image cap">
+    //     <div class="card-body">
+    //         <h5 class="card-title">Card title</h5>
+    //         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    //         <a href="" class="card-link">Read More</a>
+    //     </div>
+    // </div>
+
+    function populateNewsItem(imgSrc, newsTitle, readMoreLink){
+        var divHeader = document.createElement("div")
+        divHeader.classList.add("card", "card-block", "mx-2")
+        divHeader.style.width = "18rem"
+        divHeader.style.minWidth = "250px"
+
+        var imgEle = document.createElement("img")
+        imgEle.classList.add("card-img-top")
+        var imgSrcAttr = document.createAttribute("src")
+        imgSrcAttr.value = imgSrc
+        imgEle.setAttributeNode(imgSrcAttr)
+
+        var divCardBody = document.createElement("div")
+
+        var newsP = document.createElement("P")
+        newsP.classList.add("card-text")
+        newsP.innerHTML = newsTitle
+
+        var readMore = document.createElement("a")
+        readMore.innerHTML = "Read More"
+        var hrefAttr = document.createAttribute("href")
+        hrefAttr.value = readMoreLink
+        readMore.classList.add("card-link")
+        readMore.setAttributeNode(hrefAttr)
+        var targetAttr = document.createAttribute("target")
+        targetAttr.value = "_blank"
+        readMore.setAttributeNode(targetAttr)
+
+        divCardBody.append(newsP)
+        divCardBody.append(readMore)
+
+        divHeader.append(imgEle)
+        divHeader.append(divCardBody)
+        document.getElementById("newsList").append(divHeader)
+    }
+
+    function refreshNews(){
+        $.ajax({
+            url: '/api/news',
+            method: 'GET',
+            success: (data) => {
+                console.log(data)
+                data.articles.map((article) => {
+                    populateNewsItem(article.urlToImage, article.title, article.url)
+                })
+            }
+        })
+    }
+
+    $('#refreshNewsBtn').click(() => {
+        refreshNews()
+    })
 
     // --------------ON PAGE LOAD REQUESTS-----------------------
 
@@ -240,4 +301,7 @@ $(function(){
             }
         }
     })
+
+    //Populate News Item on page load
+    refreshNews()
 })

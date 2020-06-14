@@ -3,6 +3,7 @@ const axios = require('axios').default
 const keys = require('../../config/keys')
 
 router.get('/', (req, res) => {
+    console.log('[ GET REQUEST ] /api/news')
     
     axios.get(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${keys.news.API_KEY}`)
         .then((response) => {
