@@ -5,7 +5,7 @@ const keys = require('../../config/keys')
 router.get('/', (req, res) => {
     console.log('[ GET REQUEST ] /api/news')
     
-    axios.get(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${keys.news.API_KEY}`)
+    axios.get(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${process.env.API_KEY||keys.news.API_KEY}`)
         .then((response) => {
             res.json(response.data)
         })
